@@ -4,14 +4,19 @@
 @import "utils";
 @import "flex";
 
-body.home {
-	.plugin-class {
-		display: inline-block;
-		margin-bottom: 10px;
-		outline: 1px solid red;
+form.job-manager-form {
+	fieldset.fieldset-candidate_name,
+	fieldset.fieldset-candidate_experience .resume-manager-data-row .fieldset-date {
+		display: none;
 	}
 
-	&.has-sidebar {
-		display: block;
+	fieldset.fieldset-candidate_education .resume-manager-data-row {
+		.fieldset-date {
+			display: none;
+		}
+
+		.fieldset-notes {
+			margin-top: 100px;
+		}
 	}
 }
