@@ -1,9 +1,9 @@
-<?php namespace WP_Plugins\Boilerplate;
+<?php namespace WP_Job_Manager_TopResume_Integration;
 
 /**
  * Base Component
  *
- * @package WP_Plugins\Boilerplate
+ * @package WP_Job_Manager_TopResume_Integration
  */
 class Component extends Singular
 {

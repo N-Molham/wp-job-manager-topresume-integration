@@ -1,3 +1,3 @@
-# wp-plugins-boilerplate
+# WP Job Manager - TopResume Integration
 
-For Documentation go to [Wiki](https://github.com/N-Molham/wp-plugins-boilerplate/wiki)
+Integrates with TopResume API
