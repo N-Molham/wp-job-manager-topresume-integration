@@ -17,10 +17,25 @@ class Frontend extends Component
 		parent::init();
 
 		// WP Job Manager - resume form fields filter
-		add_filter( 'submit_resume_form_fields', [ &$this, 'add_name_fields' ], 15 );
+		add_filter( 'submit_resume_form_fields', [ &$this, 'add_resume_form_fields' ], 15 );
 
 		// WP Job Manager - resume data update action
 		add_action( 'resume_manager_update_resume_data', [ &$this, 'update_resume_candidate_name' ], 15, 2 );
+
+		// WP Job Manager - before resume form fields
+		add_action( 'submit_resume_form_resume_fields_start', [ &$this, 'resume_form_inline_css' ], 15 );
+	}
+
+	/**
+	 * Resume form inline CSS
+	 *
+	 * @return void
+	 */
+	public function resume_form_inline_css()
+	{
+		echo '<style type="text/css">',
+		'form.job-manager-form fieldset.fieldset-candidate_name { display: none; }',
+		'</style>';
 	}
 
 	/**
@@ -62,7 +77,7 @@ class Frontend extends Component
 	 *
 	 * @return array
 	 */
-	public function add_name_fields( $fields )
+	public function add_resume_form_fields( $fields )
 	{
 		if ( !isset( $fields['resume_fields'] ) || !isset( $fields['resume_fields']['candidate_name'] ) )
 		{
