@@ -49,13 +49,13 @@ class Top_Resume extends Component
 			// skip!
 			return $fields;
 		}
-
+		
 		$fields['resume_fields']['send_to_top_resume'] = [
-			'label'       => __( 'TopResume Evaluation', WPJM_TRI_DOMAIN ),
+			'label'       => __( 'Free Evaluation', WPJM_TRI_DOMAIN ),
 			'type'        => 'checkbox',
 			'required'    => false,
 			'priority'    => 15,
-			'description' => __( 'Yes, Get me free resume review from %s\'s partner, TopResume', WPJM_TRI_DOMAIN ),
+			'description' => sprintf( __( 'Yes, Get me free resume review from <strong>%s</strong> partner, <img src="https://www.topresume.com/images/universal/logos/logo-topresume.svg" alt="TopResume" class="top-resume-logo" width="120" />', WPJM_TRI_DOMAIN ), get_bloginfo('name') ),
 		];
 
 		return $fields;
