@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: WP Job Manager - TopResume Integration 1.0.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wp-job-manager-topresume-integration\n"
-"POT-Creation-Date: 2017-06-24 19:57:01+00:00\n"
+"POT-Creation-Date: 2017-06-25 10:52:03+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,19 +25,31 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: includes/classes/Frontend.php:120 includes/classes/Frontend.php:123
+#: includes/classes/Frontend.php:67
+msgid "Invalid candidate name!"
+msgstr ""
+
+#: includes/classes/Frontend.php:88 includes/classes/Frontend.php:100
+msgid "Given start/end date is not valid!"
+msgstr ""
+
+#: includes/classes/Frontend.php:94
+msgid "Given start/end duration is not valid!"
+msgstr ""
+
+#: includes/classes/Frontend.php:204 includes/classes/Frontend.php:207
 msgid "First Name"
 msgstr ""
 
-#: includes/classes/Frontend.php:129 includes/classes/Frontend.php:132
+#: includes/classes/Frontend.php:213 includes/classes/Frontend.php:216
 msgid "Last Name"
 msgstr ""
 
-#: includes/classes/Frontend.php:143 includes/classes/Frontend.php:160
+#: includes/classes/Frontend.php:227 includes/classes/Frontend.php:244
 msgid "Start date"
 msgstr ""
 
-#: includes/classes/Frontend.php:150 includes/classes/Frontend.php:167
+#: includes/classes/Frontend.php:234 includes/classes/Frontend.php:251
 msgid "End date"
 msgstr ""
 

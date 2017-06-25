@@ -1,5 +1,8 @@
 <?php namespace WP_Job_Manager_TopResume_Integration;
 
+use OpenCloud\Common\Constants\Datetime;
+use WP_Error;
+
 /**
  * Frontend logic
  *
@@ -27,8 +30,89 @@ class Frontend extends Component
 
 		// WP Job Manager - template path filter
 		add_filter( 'job_manager_locate_template', [ &$this, 'override_date_field_template' ], 15, 3 );
+
+		// WP Job Manager - resume fields validation
+		add_filter( 'submit_resume_form_validate_fields', [ &$this, 'validate_resume_extra_fields' ], 15, 3 );
 	}
 
+	/**
+	 * Validate resume's extra fields
+	 *
+	 * @param boolean|WP_Error $is_valid
+	 * @param array            $fields
+	 * @param array            $values
+	 *
+	 * @return boolean|WP_Error
+	 */
+	public function validate_resume_extra_fields( $is_valid, $fields, $values )
+	{
+		if ( !isset( $fields['resume_fields'] ) || !isset( $values['resume_fields'] ) )
+		{
+			// skip missing resume fields section
+			return $is_valid;
+		}
+
+		// defaults
+		$values['resume_fields'] = wp_parse_args( $values['resume_fields'], [
+			'candidate_name'       => '',
+			'candidate_first_name' => '',
+			'candidate_last_name'  => '',
+			'candidate_education'  => [],
+			'candidate_experience' => [],
+		] );
+
+		if ( $values['resume_fields']['candidate_name'] !== ( $values['resume_fields']['candidate_first_name'] . ' ' . $values['resume_fields']['candidate_last_name'] ) )
+		{
+			// candidate name is not as intended
+			return new WP_Error( 'wpjm_tri_candidate_name', __( 'Invalid candidate name!', WPJM_TRI_DOMAIN ) );
+		}
+
+		// vars
+		$multi_entries  = array_merge( $values['resume_fields']['candidate_education'], $values['resume_fields']['candidate_experience'] );
+		$entry_defaults = [
+			'date'       => '',
+			'start_date' => '',
+			'end_date'   => '',
+		];
+
+		foreach ( $multi_entries as $entry )
+		{
+			// defaults
+			$entry = wp_parse_args( $entry, $entry_defaults );
+
+			$start_date = \DateTime::createFromFormat( 'F j, Y', $entry['start_date'] );
+			$end_date   = \DateTime::createFromFormat( 'F j, Y', $entry['end_date'] );
+			if ( false === $end_date || false === $start_date )
+			{
+				// invalid date(s)
+				return new WP_Error( 'wpjm_tri_entry_date', __( 'Given start/end date is not valid!', WPJM_TRI_DOMAIN ) );
+			}
+
+			if ( $start_date >= $end_date )
+			{
+				// invalid date range
+				return new WP_Error( 'wpjm_tri_entry_date_range', __( 'Given start/end duration is not valid!', WPJM_TRI_DOMAIN ) );
+			}
+
+			if ( $entry['date'] !== ( $entry['start_date'] . ' / ' . $entry['end_date'] ) )
+			{
+				// invalid date(s)
+				return new WP_Error( 'wpjm_tri_entry_date_singular', __( 'Given start/end date is not valid!', WPJM_TRI_DOMAIN ) );
+			}
+		}
+
+		return $is_valid;
+	}
+
+	/**
+	 * Override resume date field template
+	 *
+	 * @param string $template
+	 * @param string $template_name
+	 * @param string $template_path
+	 *
+	 * @return string
+	 */
 	public function override_date_field_template( $template, $template_name, $template_path )
 	{
 		if ( 'form-fields/date-field.php' !== $template_name )
