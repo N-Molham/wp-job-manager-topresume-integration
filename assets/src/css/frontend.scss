@@ -19,4 +19,8 @@ form.job-manager-form {
 			margin-top: 100px;
 		}
 	}
+	
+	&[action*="action=edit"] .fieldset-send_to_top_resume {
+		display: none;
+	}
 }

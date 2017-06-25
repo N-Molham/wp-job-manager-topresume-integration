@@ -66,6 +66,13 @@ class Plugin extends Singular
 	public $frontend;
 
 	/**
+	 * TopResume Integration
+	 *
+	 * @var Top_Resume
+	 */
+	public $top_resume;
+
+	/**
 	 * Backend
 	 *
 	 * @var Ajax_Handler
@@ -86,9 +93,10 @@ class Plugin extends Singular
 		spl_autoload_register( [ &$this, 'autoloader' ] );
 
 		// modules
-		$this->ajax     = Ajax_Handler::get_instance();
-		$this->backend  = Backend::get_instance();
-		$this->frontend = Frontend::get_instance();
+		$this->top_resume = Top_Resume::get_instance();
+		$this->ajax       = Ajax_Handler::get_instance();
+		$this->backend    = Backend::get_instance();
+		$this->frontend   = Frontend::get_instance();
 
 		// plugin loaded hook
 		do_action_ref_array( 'wpjm_tri_loaded', [ &$this ] );

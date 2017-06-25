@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: WP Job Manager - TopResume Integration 1.0.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wp-job-manager-topresume-integration\n"
-"POT-Creation-Date: 2017-06-25 10:52:03+00:00\n"
+"POT-Creation-Date: 2017-06-25 12:53:53+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -53,7 +53,15 @@ msgstr ""
 msgid "End date"
 msgstr ""
 
-#: wp-job-manager-topresume-integration.php:113
+#: includes/classes/Top_Resume.php:54
+msgid "TopResume Evaluation"
+msgstr ""
+
+#: includes/classes/Top_Resume.php:58
+msgid "Yes, Get me free resume review from %s's partner, TopResume"
+msgstr ""
+
+#: wp-job-manager-topresume-integration.php:121
 msgid "Template <code>%s</code> File not found, calculated path: <code>%s</code>"
 msgstr ""
 

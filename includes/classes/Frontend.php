@@ -1,6 +1,6 @@
 <?php namespace WP_Job_Manager_TopResume_Integration;
 
-use OpenCloud\Common\Constants\Datetime;
+use DateTime;
 use WP_Error;
 
 /**
@@ -80,8 +80,8 @@ class Frontend extends Component
 			// defaults
 			$entry = wp_parse_args( $entry, $entry_defaults );
 
-			$start_date = \DateTime::createFromFormat( 'F j, Y', $entry['start_date'] );
-			$end_date   = \DateTime::createFromFormat( 'F j, Y', $entry['end_date'] );
+			$start_date = DateTime::createFromFormat( 'F j, Y', $entry['start_date'] );
+			$end_date   = DateTime::createFromFormat( 'F j, Y', $entry['end_date'] );
 			if ( false === $end_date || false === $start_date )
 			{
 				// invalid date(s)
