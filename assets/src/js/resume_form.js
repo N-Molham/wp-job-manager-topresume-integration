@@ -8,9 +8,7 @@
 		    $first_last = $( '#candidate_first_name, #candidate_last_name' );
 
 		$first_last.on( 'change keyup wpjm-tri-change', function () {
-			// $('#candidate_name')
 			$full_name.val( $first_last.filter( '#candidate_first_name' ).val() + ' ' + $first_last.filter( '#candidate_last_name' ).val() );
-			console.log( $full_name.val() );
 		} ).first().trigger( 'wpjm-tri-change' );
 
 		$( '.resume-manager-add-row' ).on( 'click wpjm-click', function ( e ) {

@@ -120,6 +120,7 @@ class Top_Resume extends Component
 		{
 			// debug
 			echo '<pre>';
+			var_dump( $request_body );
 			var_dump( $response );
 			die();
 		}
@@ -145,7 +146,12 @@ class Top_Resume extends Component
 			'type'        => 'checkbox',
 			'required'    => false,
 			'priority'    => 15,
-			'description' => sprintf( __( 'Yes, Get me free resume review from <strong>%s</strong> partner, <img src="https://www.topresume.com/images/universal/logos/logo-topresume.svg" alt="TopResume" class="top-resume-logo" width="120" />', WPJM_TRI_DOMAIN ), get_bloginfo( 'name' ) ),
+			'value'       => 1,
+			'description' => sprintf(
+				__( 'Yes, Get me free resume review from <strong>%s</strong> partner, <img src="%s" alt="TopResume" class="top-resume-logo" width="200" />', WPJM_TRI_DOMAIN ),
+				get_bloginfo( 'name' ),
+				untrailingslashit( WPJM_TRI_URI ) . '/assets/images/topresume-monster-logo.png'
+			),
 		];
 
 		return $fields;

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: WP Job Manager - TopResume Integration 1.0.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wp-job-manager-topresume-integration\n"
-"POT-Creation-Date: 2017-06-26 15:01:48+00:00\n"
+"POT-Creation-Date: 2017-06-26 15:30:29+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -53,15 +53,14 @@ msgstr ""
 msgid "End date"
 msgstr ""
 
-#: includes/classes/Top_Resume.php:144
+#: includes/classes/Top_Resume.php:145
 msgid "Free Evaluation"
 msgstr ""
 
-#: includes/classes/Top_Resume.php:148
+#: includes/classes/Top_Resume.php:151
 msgid ""
 "Yes, Get me free resume review from <strong>%s</strong> partner, <img "
-"src=\"https://www.topresume.com/images/universal/logos/logo-topresume.svg\" "
-"alt=\"TopResume\" class=\"top-resume-logo\" width=\"120\" />"
+"src=\"%s\" alt=\"TopResume\" class=\"top-resume-logo\" width=\"200\" />"
 msgstr ""
 
 #: wp-job-manager-topresume-integration.php:121
