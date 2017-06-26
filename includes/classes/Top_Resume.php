@@ -115,6 +115,14 @@ class Top_Resume extends Component
 		curl_setopt( $curl, CURLOPT_POSTFIELDS, $request_body );
 		$response = curl_exec( $curl );
 		curl_close( $curl );
+
+		if ( defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] ) )
+		{
+			// debug
+			echo '<pre>';
+			var_dump( $response );
+			die();
+		}
 	}
 
 	/**
