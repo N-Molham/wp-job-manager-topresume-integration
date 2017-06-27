@@ -160,7 +160,20 @@ class Top_Resume extends Component
 				// debug
 				echo '<pre>';
 				var_dump( $request_body );
-				var_dump( $exception->hasResponse() ? $exception->getResponse()->getReasonPhrase() : $exception );
+				if ( $exception->hasResponse() )
+				{
+					$error_phrase = $exception->getResponse()->getReasonPhrase();
+					if ( false !== strpos( mb_strtolower( $error_phrase ), 'already exists' ) )
+					{
+						// mark as sent
+						update_post_meta( $resume_id, '_wpjm_sent_to_api', 'yes' );
+					}
+					var_dump( $error_phrase );
+				}
+				else
+				{
+					var_dump( $exception );
+				}
 				die();
 			}
 		}
