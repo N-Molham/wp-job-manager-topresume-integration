@@ -29,6 +29,30 @@ class Top_Resume extends Component
 			// WordPress initialization
 			add_action( 'init', [ &$this, 'api_submission_test' ], 100 );
 		}
+
+		// WooCommerce after registration redirect URL
+		add_filter( 'woocommerce_registration_redirect', [ &$this, 'redirect_use_to_submit_resume' ], 100 );
+
+		// WordPress assets load
+		add_action( 'wp_enqueue_scripts', [ &$this, 'load_assets' ], 20 );
+	}
+
+	public function load_assets()
+	{
+		wp_enqueue_script( 'wpjm-tri-register-form', Helpers::enqueue_path() . 'js/register_form.js', [ 'jquery' ], Helpers::assets_version(), false );
+		wp_localize_script( 'wpjm-tri-register-form', 'wpjm_top_resume', [
+			'post_resume_url' => resume_manager_get_permalink( 'submit_resume_form' ),
+		] );
+	}
+
+	/**
+	 * Redirect new user to submit a resume
+	 *
+	 * @return string
+	 */
+	public function redirect_use_to_submit_resume()
+	{
+		return resume_manager_get_permalink( 'submit_resume_form' );
 	}
 
 	/**
