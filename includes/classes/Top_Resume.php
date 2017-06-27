@@ -43,10 +43,10 @@ class Top_Resume extends Component
 		require_once WPJM_TRI_DIR . 'vendor/autoload.php';
 
 		$is_debug = defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] );
-		
+
 		// query resume
 		$resume = get_post( $resume_id );
-		if ( null === $resume || 'resume' !== $resume->post_type )
+		if ( null === $resume || 'resume' !== $resume->post_type || 'yes' === $resume->_wpjm_sent_to_api )
 		{
 			// skip non-resume post
 			return;
@@ -139,6 +139,9 @@ class Top_Resume extends Component
 			$response = $client->post( 'https://api.talentinc.com/v1/resume', apply_filters( 'wpjm_tri_request_args', [
 				'multipart' => $request_body,
 			] ) );
+
+			// mark as sent
+			update_post_meta( $resume_id, '_wpjm_sent_to_api', 'yes' );
 
 			if ( $is_debug )
 			{
