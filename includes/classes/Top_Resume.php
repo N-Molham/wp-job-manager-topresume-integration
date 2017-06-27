@@ -40,6 +40,10 @@ class Top_Resume extends Component
 	 */
 	public function post_resume_through_api( $resume_id )
 	{
+		require_once WPJM_TRI_DIR . 'vendor/autoload.php';
+
+		$is_debug = defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] );
+		
 		// query resume
 		$resume = get_post( $resume_id );
 		if ( null === $resume || 'resume' !== $resume->post_type )
@@ -58,9 +62,44 @@ class Top_Resume extends Component
 
 		// Resume's candidate basic information
 		$request_body = [
-			'email'      => $resume->_candidate_email,
-			'first_name' => $resume->_candidate_first_name,
-			'last_name'  => $resume->_candidate_last_name,
+			[
+				'name'     => 'email',
+				'contents' => $resume->_candidate_email,
+			],
+			[
+				'name'     => 'first_name',
+				'contents' => $resume->_candidate_first_name,
+			],
+			[
+				'name'     => 'last_name',
+				'contents' => $resume->_candidate_last_name,
+			],
+		];
+
+		// API credentials - Development > Production
+		$partner_key = defined( 'WPJM_TRI_DEV' ) && WPJM_TRI_DEV ? 'xt2loDmOE9mZW' : 'otqxLr1U5HPWn';
+		$secret_key  = defined( 'WPJM_TRI_DEV' ) && WPJM_TRI_DEV ? 'J71XiHpR3wWChWxVSlskoNI09wEiSDeBK' : 'BOPKa6TTBwefOBV1UgqnHY881dGR92sX';
+
+		if ( defined( 'WPJM_TRI_PARTNER_KEY' ) )
+		{
+			// Constant override 
+			$partner_key = WPJM_TRI_PARTNER_KEY;
+		}
+
+		if ( defined( 'WPJM_TRI_SECRET_KEY' ) )
+		{
+			// Constant override 
+			$secret_key = WPJM_TRI_SECRET_KEY;
+		}
+
+		$request_body[] = [
+			'name'     => 'partner_key',
+			'contents' => $partner_key,
+		];
+
+		$request_body[] = [
+			'name'     => 'secret_key',
+			'contents' => $secret_key,
 		];
 
 		// fetch resume files directory
@@ -69,23 +108,17 @@ class Top_Resume extends Component
 		$resumes_dir_url  = $upload_dir['baseurl'] . '/resumes/resume_files';
 
 		// determine resume file absolute path
-		$request_body['resume_file'] = $resumes_dir_path . str_replace( $resumes_dir_url, '', $resume_file_url );
-
-		// API credentials - Development > Production
-		$request_body['partner_key'] = defined( 'WPJM_TRI_DEV' ) && WPJM_TRI_DEV ? 'xt2loDmOE9mZW' : 'otqxLr1U5HPWn';
-		$request_body['secret_key']  = defined( 'WPJM_TRI_DEV' ) && WPJM_TRI_DEV ? 'J71XiHpR3wWChWxVSlskoNI09wEiSDeBK' : 'BOPKa6TTBwefOBV1UgqnHY881dGR92sX';
-
-		if ( defined( 'WPJM_TRI_PARTNER_KEY' ) )
+		$resume_file_path = $resumes_dir_path . str_replace( $resumes_dir_url, '', $resume_file_url );
+		if ( !file_exists( $resume_file_path ) || !is_readable( $resume_file_path ) )
 		{
-			// Constant override 
-			$request_body['partner_key'] = WPJM_TRI_PARTNER_KEY;
+			// unable to locate or read the file!
+			return;
 		}
 
-		if ( defined( 'WPJM_TRI_SECRET_KEY' ) )
-		{
-			// Constant override 
-			$request_body['secret_key'] = WPJM_TRI_SECRET_KEY;
-		}
+		$request_body[] = [
+			'name'     => 'resume_file',
+			'contents' => fopen( $resume_file_path, 'rb' ),
+		];
 
 		/**
 		 * Filter TopResume API post request body
@@ -95,34 +128,38 @@ class Top_Resume extends Component
 		 *
 		 * @return array
 		 */
-		$request_body = apply_filters( 'wpjm_tri_request_args', $request_body, $resume );
+		$request_body = apply_filters( 'wpjm_tri_request_body', $request_body, $resume );
 
-		if ( !file_exists( $request_body['resume_file'] ) || !is_readable( $request_body['resume_file'] ) )
+		// request client
+		$client = new \GuzzleHttp\Client();
+
+		try
 		{
-			// unable to locate or read the file!
-			return;
+			// make the POST request
+			$response = $client->post( 'https://api.talentinc.com/v1/resume', apply_filters( 'wpjm_tri_request_args', [
+				'multipart' => $request_body,
+			] ) );
+
+			if ( $is_debug )
+			{
+				// debug
+				echo '<pre>';
+				var_dump( $request_body );
+				var_dump( $response->getBody()->getContents() );
+				die();
+			}
 		}
-
-		// load file data
-		$request_body['resume_file'] = '@' . $request_body['resume_file'] . ';type=' . mime_content_type( $request_body['resume_file'] );
-
-		// make the POST request
-		$curl = curl_init();
-		curl_setopt( $curl, CURLOPT_URL, 'https://api.talentinc.com/v1/resume' );
-		curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $curl, CURLOPT_FOLLOWLOCATION, true );
-		curl_setopt( $curl, CURLOPT_POST, true );
-		curl_setopt( $curl, CURLOPT_POSTFIELDS, $request_body );
-		$response = curl_exec( $curl );
-		curl_close( $curl );
-
-		if ( defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] ) )
+		catch ( \GuzzleHttp\Exception\ClientException $exception )
 		{
-			// debug
-			echo '<pre>';
-			var_dump( $request_body );
-			var_dump( $response );
-			die();
+			// do nothing
+			if ( $is_debug )
+			{
+				// debug
+				echo '<pre>';
+				var_dump( $request_body );
+				var_dump( $exception->hasResponse() ? $exception->getResponse()->getReasonPhrase() : $exception );
+				die();
+			}
 		}
 	}
 
