@@ -37,6 +37,11 @@ class Top_Resume extends Component
 		add_action( 'wp_enqueue_scripts', [ &$this, 'load_assets' ], 20 );
 	}
 
+	/**
+	 * Load JS & CSS assets
+	 * 
+	 * @return void
+	 */
 	public function load_assets()
 	{
 		wp_enqueue_script( 'wpjm-tri-register-form', Helpers::enqueue_path() . 'js/register_form.js', [ 'jquery' ], Helpers::assets_version(), false );
