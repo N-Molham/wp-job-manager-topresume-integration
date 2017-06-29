@@ -223,6 +223,21 @@ class Frontend extends Component
 
 		if ( isset( $fields['resume_fields']['candidate_education'] ) )
 		{
+			// store fields information
+			$education_notes = $fields['resume_fields']['candidate_education']['fields']['notes'];
+			$education_major = $fields['resume_fields']['candidate_education']['fields']['major'];
+
+			// remove
+			unset(
+				$fields['resume_fields']['candidate_education']['fields']['notes'],
+				$fields['resume_fields']['candidate_education']['fields']['major']
+			);
+
+			// re-add them in the right order
+			$fields['resume_fields']['candidate_education']['fields']['major'] = $education_major;
+			$fields['resume_fields']['candidate_education']['fields']['notes'] = $education_notes;
+
+			// start/end date range
 			$fields['resume_fields']['candidate_education']['fields']['start_date'] = [
 				'label'       => __( 'Start date', WPJM_TRI_DOMAIN ),
 				'type'        => $date_field_type,

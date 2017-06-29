@@ -23,7 +23,6 @@
 		};
 
 		var $doc = $( doc );
-
 		$doc.ajaxSuccess( function ( e, request, settings, response_body ) {
 			if ( 'string' === typeof settings.data ) {
 				var data = parse_params( settings.data );
