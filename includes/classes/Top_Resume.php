@@ -18,6 +18,9 @@ class Top_Resume extends Component
 	{
 		parent::init();
 
+		// Job Manager settings fields filter
+		add_filter( 'job_manager_settings', [ &$this, 'settings_fields' ], 20 );
+
 		// WP Job Manager - resume form fields filter
 		add_filter( 'submit_resume_form_fields', [ &$this, 'send_to_top_resume_checkbox_field' ], 20 );
 
@@ -39,7 +42,7 @@ class Top_Resume extends Component
 
 	/**
 	 * Load JS & CSS assets
-	 * 
+	 *
 	 * @return void
 	 */
 	public function load_assets()
@@ -105,9 +108,9 @@ class Top_Resume extends Component
 			],
 		];
 
-		// API credentials - Development > Production
-		$partner_key = defined( 'WPJM_TRI_DEV' ) && WPJM_TRI_DEV ? 'xt2loDmOE9mZW' : 'otqxLr1U5HPWn';
-		$secret_key  = defined( 'WPJM_TRI_DEV' ) && WPJM_TRI_DEV ? 'J71XiHpR3wWChWxVSlskoNI09wEiSDeBK' : 'BOPKa6TTBwefOBV1UgqnHY881dGR92sX';
+		// API credentials
+		$partner_key = get_option( 'wpjm_tri_partner_key' );
+		$secret_key  = get_option( 'wpjm_tri_secret_key' );
 
 		if ( defined( 'WPJM_TRI_PARTNER_KEY' ) )
 		{
@@ -119,6 +122,12 @@ class Top_Resume extends Component
 		{
 			// Constant override 
 			$secret_key = WPJM_TRI_SECRET_KEY;
+		}
+
+		if ( empty( $partner_key ) || empty( $secret_key ) )
+		{
+			// skip if any of the credentials keys are missing
+			return;
 		}
 
 		$request_body[] = [
@@ -237,6 +246,38 @@ class Top_Resume extends Component
 		];
 
 		return $fields;
+	}
+
+	/**
+	 * TopResume API credentials
+	 *
+	 * @param array $settings
+	 *
+	 * @return array
+	 */
+	public function settings_fields( $settings )
+	{
+		$settings['top_resume_integration'] = [
+			__( 'TopResume Integration', WPJM_TRI_DOMAIN ),
+			[
+				[
+					'name'  => 'wpjm_tri_partner_key',
+					'std'   => '',
+					'label' => __( 'Partner Key', WPJM_TRI_DOMAIN ),
+					'desc'  => __( 'API access credentials', WPJM_TRI_DOMAIN ),
+					'type'  => 'input',
+				],
+				[
+					'name'  => 'wpjm_tri_secret_key',
+					'std'   => '',
+					'label' => __( 'Secret Key', WPJM_TRI_DOMAIN ),
+					'desc'  => __( 'API access credentials', WPJM_TRI_DOMAIN ),
+					'type'  => 'input',
+				],
+			],
+		];
+
+		return $settings;
 	}
 
 	/**
