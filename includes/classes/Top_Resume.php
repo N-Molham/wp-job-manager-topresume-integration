@@ -78,9 +78,16 @@ class Top_Resume extends Component
 
 		// query resume
 		$resume = get_post( $resume_id );
-		if ( null === $resume || 'resume' !== $resume->post_type || 'yes' === $resume->_wpjm_sent_to_api )
+		if ( null === $resume || 'resume' !== $resume->post_type )
 		{
 			// skip non-resume post
+			return;
+		}
+
+		if ( 'yes' === $resume->_wpjm_sent_to_api )
+		{
+			Helpers::log( sprintf( 'Resume [%s] already submitted', $resume_id ), 'info' );
+
 			return;
 		}
 
@@ -89,6 +96,8 @@ class Top_Resume extends Component
 		if ( empty( $resume_file_url ) )
 		{
 			// skip resume with no file!
+			Helpers::log( sprintf( 'Resume [%s] has not file attached', $resume_id ) );
+
 			return;
 		}
 
@@ -127,6 +136,8 @@ class Top_Resume extends Component
 		if ( empty( $partner_key ) || empty( $secret_key ) )
 		{
 			// skip if any of the credentials keys are missing
+			Helpers::log( sprintf( 'API access missing, key=[%s], secret=[%s]', $partner_key, $secret_key ) );
+
 			return;
 		}
 
@@ -150,6 +161,8 @@ class Top_Resume extends Component
 		if ( !file_exists( $resume_file_path ) || !is_readable( $resume_file_path ) )
 		{
 			// unable to locate or read the file!
+			Helpers::log( sprintf( 'Unable to locate/read resume [%s] file [%s]', $resume_id, $resume_file_path ) );
+
 			return;
 		}
 
@@ -178,6 +191,8 @@ class Top_Resume extends Component
 				'multipart' => $request_body,
 			] ) );
 
+			Helpers::log( sprintf( 'Resume [%s] submitted, api-response[%s]', $resume_id, $response->getBody()->getContents() ), 'api-info' );
+
 			// mark as sent
 			update_post_meta( $resume_id, '_wpjm_sent_to_api', 'yes' );
 
@@ -192,26 +207,23 @@ class Top_Resume extends Component
 		}
 		catch ( \GuzzleHttp\Exception\ClientException $exception )
 		{
+			$error_phrase = $exception->hasResponse() ? $exception->getResponse()->getReasonPhrase() : $exception->getMessage();
+			Helpers::log( $error_phrase, 'api-error' );
+
+			if ( false !== strpos( mb_strtolower( $error_phrase ), 'already exists' ) )
+			{
+				// mark as sent
+				update_post_meta( $resume_id, '_wpjm_sent_to_api', 'yes' );
+				Helpers::log( sprintf( 'Resume [%s] already submitted, api-response[%s]', $resume_id, $error_phrase ), 'api-error' );
+			}
+
 			// do nothing
 			if ( $is_debug )
 			{
 				// debug
 				echo '<pre>';
 				var_dump( $request_body );
-				if ( $exception->hasResponse() )
-				{
-					$error_phrase = $exception->getResponse()->getReasonPhrase();
-					if ( false !== strpos( mb_strtolower( $error_phrase ), 'already exists' ) )
-					{
-						// mark as sent
-						update_post_meta( $resume_id, '_wpjm_sent_to_api', 'yes' );
-					}
-					var_dump( $error_phrase );
-				}
-				else
-				{
-					var_dump( $exception );
-				}
+				var_dump( $error_phrase );
 				die();
 			}
 		}

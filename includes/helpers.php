@@ -30,6 +30,13 @@ final class Helpers
 	 */
 	private static $assets_version;
 
+	public static function log( $error_message, $title = 'error' )
+	{
+		$error_key = 'wpjm-tri-' . sanitize_key( $title );
+
+		error_log( '#' . $error_key . ': ' . $error_message );
+	}
+
 	/**
 	 * Get Assets enqueue base path
 	 *
