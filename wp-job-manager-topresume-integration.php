@@ -3,7 +3,7 @@
 /**
  * Plugin Name: WP Job Manager - TopResume Integration
  * Description: Integrates with TopResume API
- * Version: 1.1.0
+ * Version: 1.1.2
  * Author: Nabeel Molham
  * Author URI: https://nabeel.molham.me/
  * Text Domain: wp-job-manager-topresume-integration
@@ -49,7 +49,7 @@ class Plugin extends Singular
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.0';
+	public $version = '1.1.2';
 
 	/**
 	 * Backend

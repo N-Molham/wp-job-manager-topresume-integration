@@ -26,6 +26,7 @@ class Top_Resume extends Component
 
 		// WP Job Manager - Resume reviewed and submitted action
 		add_action( 'resume_manager_resume_submitted', [ &$this, 'post_resume_through_api' ], 15 );
+		add_action( 'wpjm_tri_resume_submitted', [ &$this, 'post_resume_through_api' ] );
 
 		if ( defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] ) )
 		{
@@ -38,6 +39,26 @@ class Top_Resume extends Component
 
 		// WordPress assets load
 		add_action( 'wp_enqueue_scripts', [ &$this, 'load_assets' ], 20 );
+
+		// Post status change hook
+		add_action( 'transition_post_status', [ &$this, 'trigger_resume_submit' ], 10, 3 );
+	}
+
+	/**
+	 * Manual trigger API submit for resume on status switch to "publish"
+	 *
+	 * @param string  $new_status New post status.
+	 * @param string  $old_status Old post status.
+	 * @param WP_Post $post Post object.
+	 *
+	 * @return void
+	 */
+	public function trigger_resume_submit( $new_status, $old_status, $post )
+	{
+		if ( 'publish' === $new_status && 'resume' === get_post_type( $post ) )
+		{
+			do_action( 'wpjm_tri_resume_submitted', $post );
+		}
 	}
 
 	/**
@@ -77,7 +98,16 @@ class Top_Resume extends Component
 		$is_debug = defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] );
 
 		// query resume
-		$resume = get_post( $resume_id );
+		if ( $resume_id instanceof WP_Post )
+		{
+			$resume    = $resume_id;
+			$resume_id = $resume->ID;
+		}
+		else
+		{
+			$resume = get_post( $resume_id );
+		}
+
 		if ( null === $resume || 'resume' !== $resume->post_type )
 		{
 			// skip non-resume post
