@@ -2,10 +2,10 @@
 # This file is distributed under the GNU General Public License, version 3, http://www.gnu.org/licenses/gpl-3.0.en.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Job Manager - TopResume Integration 1.1.2\n"
+"Project-Id-Version: WP Job Manager - TopResume Integration 1.1.4\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wp-job-manager-topresume-integration\n"
-"POT-Creation-Date: 2017-07-06 14:41:27+00:00\n"
+"POT-Creation-Date: 2017-09-03 13:25:19+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,61 +25,61 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: includes/classes/Frontend.php:67
+#: includes/classes/Frontend.php:62
 msgid "Invalid candidate name!"
 msgstr ""
 
-#: includes/classes/Frontend.php:88 includes/classes/Frontend.php:100
+#: includes/classes/Frontend.php:81 includes/classes/Frontend.php:91
 msgid "Given start/end date is not valid!"
 msgstr ""
 
-#: includes/classes/Frontend.php:94
+#: includes/classes/Frontend.php:86
 msgid "Given start/end duration is not valid!"
 msgstr ""
 
-#: includes/classes/Frontend.php:204 includes/classes/Frontend.php:207
+#: includes/classes/Frontend.php:184 includes/classes/Frontend.php:187
 msgid "First Name"
 msgstr ""
 
-#: includes/classes/Frontend.php:213 includes/classes/Frontend.php:216
+#: includes/classes/Frontend.php:193 includes/classes/Frontend.php:196
 msgid "Last Name"
 msgstr ""
 
-#: includes/classes/Frontend.php:242 includes/classes/Frontend.php:259
+#: includes/classes/Frontend.php:221 includes/classes/Frontend.php:237
 msgid "Start date"
 msgstr ""
 
-#: includes/classes/Frontend.php:249 includes/classes/Frontend.php:266
+#: includes/classes/Frontend.php:228 includes/classes/Frontend.php:244
 msgid "End date"
 msgstr ""
 
-#: includes/classes/Top_Resume.php:278
+#: includes/classes/Top_Resume.php:268
 msgid "Free Evaluation"
 msgstr ""
 
-#: includes/classes/Top_Resume.php:284
+#: includes/classes/Top_Resume.php:274
 msgid ""
-"Yes, Get me free resume review from <strong>%s</strong> partner, <img "
-"src=\"%s\" alt=\"TopResume\" class=\"top-resume-logo\" width=\"200\" />"
+"Yes, please email me a free resume review from <strong>%s</strong> partner, "
+"<img src=\"%s\" alt=\"TopResume\" class=\"top-resume-logo\" width=\"120\" />"
 msgstr ""
 
-#: includes/classes/Top_Resume.php:303
+#: includes/classes/Top_Resume.php:292
 msgid "TopResume Integration"
 msgstr ""
 
-#: includes/classes/Top_Resume.php:308
+#: includes/classes/Top_Resume.php:297
 msgid "Partner Key"
 msgstr ""
 
-#: includes/classes/Top_Resume.php:309 includes/classes/Top_Resume.php:316
+#: includes/classes/Top_Resume.php:298 includes/classes/Top_Resume.php:305
 msgid "API access credentials"
 msgstr ""
 
-#: includes/classes/Top_Resume.php:315
+#: includes/classes/Top_Resume.php:304
 msgid "Secret Key"
 msgstr ""
 
-#: wp-job-manager-topresume-integration.php:121
+#: wp-job-manager-topresume-integration.php:116
 msgid "Template <code>%s</code> File not found, calculated path: <code>%s</code>"
 msgstr ""
 

@@ -7,41 +7,53 @@ use WP_Post;
  *
  * @package WP_Job_Manager_TopResume_Integration
  */
-class Top_Resume extends Component
-{
+class Top_Resume extends Component {
 	/**
 	 * Constructor
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		parent::init();
 
 		// Job Manager settings fields filter
 		add_filter( 'job_manager_settings', [ &$this, 'settings_fields' ], 20 );
 
 		// WP Job Manager - resume form fields filter
-		add_filter( 'submit_resume_form_fields', [ &$this, 'send_to_top_resume_checkbox_field' ], 20 );
+		add_filter( 'submit_resume_form_fields', [
+			&$this,
+			'send_to_top_resume_checkbox_field',
+		], 20 );
 
 		// WP Job Manager - Resume reviewed and submitted action
-		add_action( 'resume_manager_resume_submitted', [ &$this, 'post_resume_through_api' ], 15 );
-		add_action( 'wpjm_tri_resume_submitted', [ &$this, 'post_resume_through_api' ] );
+		add_action( 'resume_manager_resume_submitted', [
+			&$this,
+			'post_resume_through_api',
+		], 15 );
+		add_action( 'wpjm_tri_resume_submitted', [
+			&$this,
+			'post_resume_through_api',
+		] );
 
-		if ( defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] ) )
-		{
+		if ( defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] ) ) {
 			// WordPress initialization
 			add_action( 'init', [ &$this, 'api_submission_test' ], 100 );
 		}
 
 		// WooCommerce after registration redirect URL
-		add_filter( 'woocommerce_registration_redirect', [ &$this, 'redirect_use_to_submit_resume' ], 100 );
+		add_filter( 'woocommerce_registration_redirect', [
+			&$this,
+			'redirect_use_to_submit_resume',
+		], 100 );
 
 		// WordPress assets load
 		add_action( 'wp_enqueue_scripts', [ &$this, 'load_assets' ], 20 );
 
 		// Post status change hook
-		add_action( 'transition_post_status', [ &$this, 'trigger_resume_submit' ], 10, 3 );
+		add_action( 'transition_post_status', [
+			&$this,
+			'trigger_resume_submit',
+		], 10, 3 );
 	}
 
 	/**
@@ -49,14 +61,12 @@ class Top_Resume extends Component
 	 *
 	 * @param string  $new_status New post status.
 	 * @param string  $old_status Old post status.
-	 * @param WP_Post $post Post object.
+	 * @param WP_Post $post       Post object.
 	 *
 	 * @return void
 	 */
-	public function trigger_resume_submit( $new_status, $old_status, $post )
-	{
-		if ( 'publish' === $new_status && 'resume' === get_post_type( $post ) )
-		{
+	public function trigger_resume_submit( $new_status, $old_status, $post ) {
+		if ( 'publish' === $new_status && 'resume' === get_post_type( $post ) ) {
 			do_action( 'wpjm_tri_resume_submitted', $post );
 		}
 	}
@@ -66,8 +76,7 @@ class Top_Resume extends Component
 	 *
 	 * @return void
 	 */
-	public function load_assets()
-	{
+	public function load_assets() {
 		wp_enqueue_script( 'wpjm-tri-register-form', Helpers::enqueue_path() . 'js/register_form.js', [ 'jquery' ], Helpers::assets_version(), false );
 		wp_localize_script( 'wpjm-tri-register-form', 'wpjm_top_resume', [
 			'post_resume_url' => resume_manager_get_permalink( 'submit_resume_form' ),
@@ -79,8 +88,7 @@ class Top_Resume extends Component
 	 *
 	 * @return string
 	 */
-	public function redirect_use_to_submit_resume()
-	{
+	public function redirect_use_to_submit_resume() {
 		return resume_manager_get_permalink( 'submit_resume_form' );
 	}
 
@@ -91,31 +99,25 @@ class Top_Resume extends Component
 	 *
 	 * @return void
 	 */
-	public function post_resume_through_api( $resume_id )
-	{
+	public function post_resume_through_api( $resume_id ) {
 		require_once WPJM_TRI_DIR . 'vendor/autoload.php';
 
 		$is_debug = defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] );
 
 		// query resume
-		if ( $resume_id instanceof WP_Post )
-		{
+		if ( $resume_id instanceof WP_Post ) {
 			$resume    = $resume_id;
 			$resume_id = $resume->ID;
-		}
-		else
-		{
+		} else {
 			$resume = get_post( $resume_id );
 		}
 
-		if ( null === $resume || 'resume' !== $resume->post_type )
-		{
+		if ( null === $resume || 'resume' !== $resume->post_type ) {
 			// skip non-resume post
 			return;
 		}
 
-		if ( 'yes' === $resume->_wpjm_sent_to_api )
-		{
+		if ( 'yes' === $resume->_wpjm_sent_to_api ) {
 			Helpers::log( sprintf( 'Resume [%s] already submitted', $resume_id ), 'info' );
 
 			return;
@@ -123,8 +125,7 @@ class Top_Resume extends Component
 
 		// Resume file URL
 		$resume_file_url = get_resume_file( $resume_id );
-		if ( empty( $resume_file_url ) )
-		{
+		if ( empty( $resume_file_url ) ) {
 			// skip resume with no file!
 			Helpers::log( sprintf( 'Resume [%s] has not file attached', $resume_id ) );
 
@@ -151,20 +152,17 @@ class Top_Resume extends Component
 		$partner_key = get_option( 'wpjm_tri_partner_key' );
 		$secret_key  = get_option( 'wpjm_tri_secret_key' );
 
-		if ( defined( 'WPJM_TRI_PARTNER_KEY' ) )
-		{
+		if ( defined( 'WPJM_TRI_PARTNER_KEY' ) ) {
 			// Constant override 
 			$partner_key = WPJM_TRI_PARTNER_KEY;
 		}
 
-		if ( defined( 'WPJM_TRI_SECRET_KEY' ) )
-		{
+		if ( defined( 'WPJM_TRI_SECRET_KEY' ) ) {
 			// Constant override 
 			$secret_key = WPJM_TRI_SECRET_KEY;
 		}
 
-		if ( empty( $partner_key ) || empty( $secret_key ) )
-		{
+		if ( empty( $partner_key ) || empty( $secret_key ) ) {
 			// skip if any of the credentials keys are missing
 			Helpers::log( sprintf( 'API access missing, key=[%s], secret=[%s]', $partner_key, $secret_key ) );
 
@@ -188,8 +186,7 @@ class Top_Resume extends Component
 
 		// determine resume file absolute path
 		$resume_file_path = $resumes_dir_path . str_replace( $resumes_dir_url, '', $resume_file_url );
-		if ( !file_exists( $resume_file_path ) || !is_readable( $resume_file_path ) )
-		{
+		if ( ! file_exists( $resume_file_path ) || ! is_readable( $resume_file_path ) ) {
 			// unable to locate or read the file!
 			Helpers::log( sprintf( 'Unable to locate/read resume [%s] file [%s]', $resume_id, $resume_file_path ) );
 
@@ -214,8 +211,7 @@ class Top_Resume extends Component
 		// request client
 		$client = new \GuzzleHttp\Client();
 
-		try
-		{
+		try {
 			// make the POST request
 			$response = $client->post( 'https://api.talentinc.com/v1/resume', apply_filters( 'wpjm_tri_request_args', [
 				'multipart' => $request_body,
@@ -226,8 +222,7 @@ class Top_Resume extends Component
 			// mark as sent
 			update_post_meta( $resume_id, '_wpjm_sent_to_api', 'yes' );
 
-			if ( $is_debug )
-			{
+			if ( $is_debug ) {
 				// debug
 				echo '<pre>';
 				var_dump( $request_body );
@@ -235,21 +230,18 @@ class Top_Resume extends Component
 				die();
 			}
 		}
-		catch ( \GuzzleHttp\Exception\ClientException $exception )
-		{
+		catch ( \GuzzleHttp\Exception\ClientException $exception ) {
 			$error_phrase = $exception->hasResponse() ? $exception->getResponse()->getReasonPhrase() : $exception->getMessage();
 			Helpers::log( $error_phrase, 'api-error' );
 
-			if ( false !== strpos( mb_strtolower( $error_phrase ), 'already exists' ) )
-			{
+			if ( false !== strpos( mb_strtolower( $error_phrase ), 'already exists' ) ) {
 				// mark as sent
 				update_post_meta( $resume_id, '_wpjm_sent_to_api', 'yes' );
 				Helpers::log( sprintf( 'Resume [%s] already submitted, api-response[%s]', $resume_id, $error_phrase ), 'api-error' );
 			}
 
 			// do nothing
-			if ( $is_debug )
-			{
+			if ( $is_debug ) {
 				// debug
 				echo '<pre>';
 				var_dump( $request_body );
@@ -266,10 +258,8 @@ class Top_Resume extends Component
 	 *
 	 * @return array
 	 */
-	public function send_to_top_resume_checkbox_field( $fields )
-	{
-		if ( !isset( $fields['resume_fields'] ) )
-		{
+	public function send_to_top_resume_checkbox_field( $fields ) {
+		if ( ! isset( $fields['resume_fields'] ) ) {
 			// skip!
 			return $fields;
 		}
@@ -279,11 +269,11 @@ class Top_Resume extends Component
 			'type'        => 'checkbox',
 			'required'    => false,
 			'priority'    => 15,
-			'value'       => 1,
+			'value'       => 0,
 			'description' => sprintf(
-				__( 'Yes, Get me free resume review from <strong>%s</strong> partner, <img src="%s" alt="TopResume" class="top-resume-logo" width="200" />', WPJM_TRI_DOMAIN ),
+				__( 'Yes, please email me a free resume review from <strong>%s</strong> partner, <img src="%s" alt="TopResume" class="top-resume-logo" width="120" />', WPJM_TRI_DOMAIN ),
 				get_bloginfo( 'name' ),
-				untrailingslashit( WPJM_TRI_URI ) . '/assets/images/topresume-monster-logo.png'
+				untrailingslashit( WPJM_TRI_URI ) . '/assets/images/logo-topresume-01.png'
 			),
 		];
 
@@ -297,8 +287,7 @@ class Top_Resume extends Component
 	 *
 	 * @return array
 	 */
-	public function settings_fields( $settings )
-	{
+	public function settings_fields( $settings ) {
 		$settings['top_resume_integration'] = [
 			__( 'TopResume Integration', WPJM_TRI_DOMAIN ),
 			[
@@ -327,8 +316,7 @@ class Top_Resume extends Component
 	 *
 	 * @return void
 	 */
-	public function api_submission_test()
-	{
+	public function api_submission_test() {
 		/**
 		 * Manual trigger for resume submission
 		 *

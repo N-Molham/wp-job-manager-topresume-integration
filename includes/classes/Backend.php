@@ -5,15 +5,13 @@
  *
  * @package WP_Job_Manager_TopResume_Integration
  */
-class Backend extends Component
-{
+class Backend extends Component {
 	/**
 	 * Constructor
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		parent::init();
 	}
 }

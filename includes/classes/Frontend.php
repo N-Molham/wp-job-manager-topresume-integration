@@ -8,15 +8,13 @@ use WP_Error;
  *
  * @package WP_Job_Manager_TopResume_Integration
  */
-class Frontend extends Component
-{
+class Frontend extends Component {
 	/**
 	 * Constructor
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		parent::init();
 
 		// WP Job Manager - resume form fields filter
@@ -44,10 +42,8 @@ class Frontend extends Component
 	 *
 	 * @return boolean|WP_Error
 	 */
-	public function validate_resume_extra_fields( $is_valid, $fields, $values )
-	{
-		if ( !isset( $fields['resume_fields'] ) || !isset( $values['resume_fields'] ) )
-		{
+	public function validate_resume_extra_fields( $is_valid, $fields, $values ) {
+		if ( ! isset( $fields['resume_fields'] ) || ! isset( $values['resume_fields'] ) ) {
 			// skip missing resume fields section
 			return $is_valid;
 		}
@@ -61,8 +57,7 @@ class Frontend extends Component
 			'candidate_experience' => [],
 		] );
 
-		if ( $values['resume_fields']['candidate_name'] !== ( $values['resume_fields']['candidate_first_name'] . ' ' . $values['resume_fields']['candidate_last_name'] ) )
-		{
+		if ( $values['resume_fields']['candidate_name'] !== ( $values['resume_fields']['candidate_first_name'] . ' ' . $values['resume_fields']['candidate_last_name'] ) ) {
 			// candidate name is not as intended
 			return new WP_Error( 'wpjm_tri_candidate_name', __( 'Invalid candidate name!', WPJM_TRI_DOMAIN ) );
 		}
@@ -75,27 +70,23 @@ class Frontend extends Component
 			'end_date'   => '',
 		];
 
-		foreach ( $multi_entries as $entry )
-		{
+		foreach ( $multi_entries as $entry ) {
 			// defaults
 			$entry = wp_parse_args( $entry, $entry_defaults );
 
 			$start_date = DateTime::createFromFormat( 'F j, Y', $entry['start_date'] );
 			$end_date   = DateTime::createFromFormat( 'F j, Y', $entry['end_date'] );
-			if ( false === $end_date || false === $start_date )
-			{
+			if ( false === $end_date || false === $start_date ) {
 				// invalid date(s)
 				return new WP_Error( 'wpjm_tri_entry_date', __( 'Given start/end date is not valid!', WPJM_TRI_DOMAIN ) );
 			}
 
-			if ( $start_date >= $end_date )
-			{
+			if ( $start_date >= $end_date ) {
 				// invalid date range
 				return new WP_Error( 'wpjm_tri_entry_date_range', __( 'Given start/end duration is not valid!', WPJM_TRI_DOMAIN ) );
 			}
 
-			if ( $entry['date'] !== ( $entry['start_date'] . ' / ' . $entry['end_date'] ) )
-			{
+			if ( $entry['date'] !== ( $entry['start_date'] . ' / ' . $entry['end_date'] ) ) {
 				// invalid date(s)
 				return new WP_Error( 'wpjm_tri_entry_date_singular', __( 'Given start/end date is not valid!', WPJM_TRI_DOMAIN ) );
 			}
@@ -113,10 +104,8 @@ class Frontend extends Component
 	 *
 	 * @return string
 	 */
-	public function override_date_field_template( $template, $template_name, $template_path )
-	{
-		if ( 'form-fields/date-field.php' !== $template_name )
-		{
+	public function override_date_field_template( $template, $template_name, $template_path ) {
+		if ( 'form-fields/date-field.php' !== $template_name ) {
 			// skip unwanted templates
 			return $template;
 		}
@@ -129,8 +118,7 @@ class Frontend extends Component
 	 *
 	 * @return void
 	 */
-	public function resume_form_inline_css()
-	{
+	public function resume_form_inline_css() {
 		$assets_path    = Helpers::enqueue_path();
 		$assets_version = Helpers::assets_version();
 
@@ -150,21 +138,17 @@ class Frontend extends Component
 	 *
 	 * @return void
 	 */
-	public function update_resume_candidate_name( $resume_id, $values )
-	{
-		if ( !isset( $values['resume_fields'] ) )
-		{
+	public function update_resume_candidate_name( $resume_id, $values ) {
+		if ( ! isset( $values['resume_fields'] ) ) {
 			// skip unknown fields
 			return;
 		}
 
-		if ( !empty( $values['resume_fields']['candidate_education'] ) )
-		{
+		if ( ! empty( $values['resume_fields']['candidate_education'] ) ) {
 			// dd($values['resume_fields']['candidate_education']);
 		}
 
-		if ( isset( $values['resume_fields']['candidate_name'] ) )
-		{
+		if ( isset( $values['resume_fields']['candidate_name'] ) ) {
 			$values['resume_fields'] = wp_parse_args( $values['resume_fields'], [
 				'candidate_first_name' => '',
 				'candidate_last_name'  => '',
@@ -173,8 +157,7 @@ class Frontend extends Component
 			// new candidate name
 			$candidate_name = trim( $values['resume_fields']['candidate_first_name'] . ' ' . $values['resume_fields']['candidate_last_name'] );
 
-			if ( !empty( $candidate_name ) )
-			{
+			if ( ! empty( $candidate_name ) ) {
 				// update value
 				update_post_meta( $resume_id, '_candidate_name', $candidate_name );
 				wp_update_post( [ 'ID' => $resume_id, 'post_title' => $candidate_name ] );
@@ -189,16 +172,13 @@ class Frontend extends Component
 	 *
 	 * @return array
 	 */
-	public function modify_resume_form_fields( $fields )
-	{
-		if ( !isset( $fields['resume_fields'] ) )
-		{
+	public function modify_resume_form_fields( $fields ) {
+		if ( ! isset( $fields['resume_fields'] ) ) {
 			// skip!
 			return $fields;
 		}
 
-		if ( isset( $fields['resume_fields']['candidate_name'] ) )
-		{
+		if ( isset( $fields['resume_fields']['candidate_name'] ) ) {
 			// first name
 			$fields['resume_fields']['candidate_first_name'] = [
 				'label'       => __( 'First Name', WPJM_TRI_DOMAIN ),
@@ -221,8 +201,7 @@ class Frontend extends Component
 
 		$date_field_type = class_exists( 'WP_Job_Manager_Field_Editor_Assets' ) ? 'date' : 'text';
 
-		if ( isset( $fields['resume_fields']['candidate_education'] ) )
-		{
+		if ( isset( $fields['resume_fields']['candidate_education'] ) ) {
 			// store fields information
 			$education_notes = $fields['resume_fields']['candidate_education']['fields']['notes'];
 			$education_major = $fields['resume_fields']['candidate_education']['fields']['major'];
@@ -253,8 +232,7 @@ class Frontend extends Component
 			];
 		}
 
-		if ( isset( $fields['resume_fields']['candidate_experience'] ) )
-		{
+		if ( isset( $fields['resume_fields']['candidate_experience'] ) ) {
 			$fields['resume_fields']['candidate_experience']['fields']['start_date'] = [
 				'label'       => __( 'Start date', WPJM_TRI_DOMAIN ),
 				'type'        => $date_field_type,

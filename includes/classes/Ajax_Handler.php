@@ -5,22 +5,18 @@
  *
  * @package WP_Job_Manager_TopResume_Integration
  */
-class Ajax_Handler extends Component
-{
+class Ajax_Handler extends Component {
 	/**
 	 * Constructor
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		parent::init();
 
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-		{
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			$action = filter_var( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '', FILTER_SANITIZE_STRING );
-			if ( method_exists( $this, $action ) )
-			{
+			if ( method_exists( $this, $action ) ) {
 				// hook into action if it's method exists
 				add_action( 'wp_ajax_' . $action, [ &$this, $action ] );
 			}
@@ -36,8 +32,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function debug( $data )
-	{
+	public function debug( $data ) {
 		// return dump
 		$this->error( $data );
 	}
@@ -51,8 +46,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function dump( $args )
-	{
+	public function dump( $args ) {
 		// return dump
 		$this->error( print_r( func_num_args() === 1 ? $args : func_get_args(), true ) );
 	}
@@ -66,8 +60,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function error( $data )
-	{
+	public function error( $data ) {
 		wp_send_json_error( $data );
 	}
 
@@ -80,8 +73,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function success( $data )
-	{
+	public function success( $data ) {
 		wp_send_json_success( $data );
 	}
 
@@ -94,8 +86,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function response( $response )
-	{
+	public function response( $response ) {
 		// send response
 		wp_send_json( $response );
 	}
