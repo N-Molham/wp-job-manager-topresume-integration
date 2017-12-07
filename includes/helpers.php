@@ -1,5 +1,7 @@
 <?php namespace WP_Job_Manager_TopResume_Integration;
 
+use WC_Logger;
+
 /**
  * Class Helpers
  *
@@ -28,10 +30,40 @@ final class Helpers {
 	 */
 	private static $assets_version;
 
-	public static function log( $error_message, $title = 'error' ) {
-		$error_key = 'wpjm-tri-' . sanitize_key( $title );
+	/**
+	 * @var boolean
+	 */
+	private static $use_wc_log;
 
-		error_log( '#' . $error_key . ': ' . $error_message );
+	/**
+	 * @var WC_Logger
+	 */
+	private static $logger;
+
+	public static function log( $log_message, $title = 'error' ) {
+		$log_key = 'wpjm-tri-' . sanitize_key( $title );
+
+		if ( null === self::$use_wc_log ) {
+			self::$use_wc_log = class_exists( 'WC_Logger' );
+		}
+
+		if ( self::$use_wc_log ) {
+			// use WooCommerce log system if found
+
+			if ( null === self::$logger ) {
+				self::$logger = new WC_Logger();
+			}
+
+			self::$logger->log( 'debug', $log_key . ': ' . $log_message );
+
+		} else {
+
+			$log_message = sprintf( '[%s] %s', current_time( 'mysql' ), $log_key . ': ' . $log_message );
+
+			// fallback to normal error log
+			error_log( '#top_resume: ' . $log_message );
+
+		}
 	}
 
 	/**

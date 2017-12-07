@@ -20,20 +20,11 @@ class Top_Resume extends Component {
 		add_filter( 'job_manager_settings', [ &$this, 'settings_fields' ], 20 );
 
 		// WP Job Manager - resume form fields filter
-		add_filter( 'submit_resume_form_fields', [
-			&$this,
-			'send_to_top_resume_checkbox_field',
-		], 20 );
+		add_filter( 'submit_resume_form_fields', [ &$this, 'send_to_top_resume_checkbox_field' ], 20 );
 
 		// WP Job Manager - Resume reviewed and submitted action
-		add_action( 'resume_manager_resume_submitted', [
-			&$this,
-			'post_resume_through_api',
-		], 15 );
-		add_action( 'wpjm_tri_resume_submitted', [
-			&$this,
-			'post_resume_through_api',
-		] );
+		add_action( 'resume_manager_resume_submitted', [ &$this, 'post_resume_through_api' ], 15 );
+		add_action( 'wpjm_tri_resume_submitted', [ &$this, 'post_resume_through_api' ] );
 
 		if ( defined( 'WPJM_TRI_RESUME' ) && isset( $_GET['wpjm_tri_test'] ) ) {
 			// WordPress initialization
@@ -41,19 +32,13 @@ class Top_Resume extends Component {
 		}
 
 		// WooCommerce after registration redirect URL
-		add_filter( 'woocommerce_registration_redirect', [
-			&$this,
-			'redirect_use_to_submit_resume',
-		], 100 );
+		add_filter( 'woocommerce_registration_redirect', [ &$this, 'redirect_use_to_submit_resume' ], 100 );
 
 		// WordPress assets load
 		add_action( 'wp_enqueue_scripts', [ &$this, 'load_assets' ], 20 );
 
 		// Post status change hook
-		add_action( 'transition_post_status', [
-			&$this,
-			'trigger_resume_submit',
-		], 10, 3 );
+		add_action( 'transition_post_status', [ &$this, 'trigger_resume_submit' ], 10, 3 );
 	}
 
 	/**
@@ -114,6 +99,12 @@ class Top_Resume extends Component {
 
 		if ( null === $resume || 'resume' !== $resume->post_type ) {
 			// skip non-resume post
+			return;
+		}
+
+		if ( empty( $resume->_send_to_top_resume ) ) {
+			Helpers::log( sprintf( 'Resume [%s] are not marked to be sent', $resume_id ), 'info' );
+
 			return;
 		}
 
@@ -322,6 +313,6 @@ class Top_Resume extends Component {
 		 *
 		 * @param int $resume_id
 		 */
-		do_action( 'resume_manager_resume_submitted', WPJM_TRI_RESUME );
+		do_action( 'resume_manager_resume_submitted', WPJM_TRI_DOMAIN );
 	}
 }
